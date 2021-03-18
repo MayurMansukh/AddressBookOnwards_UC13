@@ -229,6 +229,67 @@ public class AddressBook {
         }
         System.out.println("Count of contacts in " + state + " state is: " + count);
     }
+    public void writeCSVFile() throws IOException{
+        FileWriter fileWriter = null;
+        try {
+            fileWriter = new FileWriter(String.valueOf(Paths.get("addressBook.csv")));
+
+            fileWriter.append("First Name, Last Name, Address, City, State, Zip, Phone-Number, Email\n");
+
+            for(Contact g: list) {
+                fileWriter.append(String.valueOf(g.getFirstName()));
+                fileWriter.append(",");
+                fileWriter.append(g.getLastName());
+                fileWriter.append(",");
+                fileWriter.append(g.getAddress());
+                fileWriter.append(",");
+                fileWriter.append(g.getCity());
+                fileWriter.append(",");
+                fileWriter.append(g.getState());
+                fileWriter.append(",");
+                fileWriter.append(g.getZip());
+                fileWriter.append(",");
+                fileWriter.append(g.getPhoneNumber());
+                fileWriter.append(",");
+                fileWriter.append(g.getEmail());
+                fileWriter.append(",");
+                fileWriter.append("\n");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                fileWriter.flush();
+                fileWriter.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void readCsvFile() throws IOException {
+        BufferedReader reader = null;
+        try {
+            String line = "";
+            reader = new BufferedReader(new FileReader(String.valueOf(Paths.get("addressBook.csv"))));
+            while ((line = reader.readLine()) != null) {
+                String[] details = line.split(",");
+                if (details.length > 0) {
+                    Contact P1 = new Contact(details[0], details[1], details[2], details[3], details[4], details[5],
+                            details[6], details[7]);
+
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                reader.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
     private void AddDetails() {
@@ -368,7 +429,9 @@ public class AddressBook {
                     try {
                         address.AddDetails();
                         address.writeData();
+                        address.writeCSVFile();
                         address.readData();
+                        address.readCsvFile();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
