@@ -1,21 +1,21 @@
 package com.AddressBook;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Scanner;
 import java.util.stream.Collectors;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
+
+
+
 
 
 class Contact{
@@ -212,6 +212,38 @@ public class AddressBook {
 
     }
 
+    @SuppressWarnings("unchecked")
+    public void writeintoJsonFile() throws IOException{
+        JSONObject obj=new JSONObject();
+        try {
+            for(Contact c: list) {
+                obj.put("First name: ", c.getFirstName());
+                obj.put("Last name: ",c.getLastName());
+                obj.put("Address: ",c.getAddress());
+                obj.put("City: ", c.getCity());
+                obj.put("State: ", c.getState());
+                obj.put("Zipcode: ", c.getZip());
+                obj.put("Phone-number: ", c.getPhoneNumber());
+                obj.put("Email: ", c.getEmail());
+                FileWriter writer=new FileWriter(String.valueOf(Paths.get("Addressbook.json")));
+                writer.write(obj.toJSONString());
+                writer.flush();
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void readfromJsonFile()throws IOException{
+        FileReader reader=new FileReader(String.valueOf(Paths.get("Addressbook.json")));
+        JSONParser jparse=new JSONParser();
+        try {
+            System.out.println(jparse.parse(reader));
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void PersonStateDictionary() {
         for (AddressBook address : book) {
             for (Contact contact : address.list) {
@@ -229,6 +261,9 @@ public class AddressBook {
         }
         System.out.println("Count of contacts in " + state + " state is: " + count);
     }
+
+
+
     public void writeCSVFile() throws IOException{
         FileWriter fileWriter = null;
         try {
@@ -341,6 +376,7 @@ public class AddressBook {
         Files.lines(Paths.get("addressBook.txt")).forEach(System.out::println);
     }
 
+
     public void sortbyCity() {
         System.out.println("\n After Sorting the contact details by City : \n");
         List<Contact> SortedList = list.stream()
@@ -429,9 +465,11 @@ public class AddressBook {
                     try {
                         address.AddDetails();
                         address.writeData();
+                        address.writeintoJsonFile();
                         address.writeCSVFile();
                         address.readData();
                         address.readCsvFile();
+                        address.writeintoJsonFile();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
